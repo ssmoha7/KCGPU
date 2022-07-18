@@ -70,7 +70,6 @@ int main(int argc, char** argv)
         return;
     }
 
-
     Timer read_graph_timer;
 
     const char* matr = config.srcGraph;
@@ -89,7 +88,9 @@ int main(int argc, char** argv)
 
     if (config.sortEdges)
     {
+        printf("Sorting Edges ... \n");
         f.sort_edges(edges);
+        printf("Done Sorting Edges ... \n");
     }
 
     graph::CSRCOO<uint> csrcoo;
@@ -230,7 +231,7 @@ int main(int argc, char** argv)
     double time_init = t.elapsed();
     if (config.orient == Degree || config.orient == Degeneracy)
     {
-        Log(info, "HH Preprocess time: %f s", time_init);
+        Log(info, "Preprocess time: %f s", time_init);
     }
 
 

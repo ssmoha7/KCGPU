@@ -104,24 +104,43 @@ namespace graph
             assert(fp_ != nullptr);
 
             size_t i = 0;
-            for (; i < n; ++i) {
+            for (int j=0; j < n/2; ++j) {
                 long long unsigned dst, src, weight;
-                const size_t numFilled = fscanf(fp_, "%llu %llu %llu", &dst, &src, &weight);
-                if (numFilled != 3) {
-                    if (feof(fp_)) {
-                        return i;
+                
+                char line[100];
+                if((fscanf(fp_, "%[^\n]%*c", line))!= EOF)
+                {
+                    if(line[0] == '%' || line[0] == '#')
+                    {
+
                     }
-                    else if (ferror(fp_)) {
-                        Log(LogPriorityEnum::error, "Error while reading {}: {}", path_, strerror(errno));
-                        return i;
-                    }
-                    else {
-                        Log(LogPriorityEnum::critical, "Unexpected error while reading {}", path_);
-                        exit(-1);
+                    else
+                    {
+                        const size_t numFilled = sscanf(line, "%llu %llu", &dst, &src);
+                        if (numFilled != 2) {
+                          
+                            Log(LogPriorityEnum::critical, "Unexpected error while reading {}", path_);
+                            exit(-1);
+                        }
+                        else
+                        {
+                            if(src != dst)
+                            {
+                                ptr[i].first = static_cast<T>(src);
+                                ptr[i].second = static_cast<T>(dst);
+                                i++;
+                                
+                                ptr[i].first = static_cast<T>(dst);
+                                ptr[i].second = static_cast<T>(src);
+                                i++;
+                            }
+
+
+                        }
                     }
                 }
-                ptr[i].first = static_cast<T>(src);
-                ptr[i].second = static_cast<T>(dst);
+
+               
             }
             return i;
         }
@@ -136,6 +155,7 @@ namespace graph
             std::istream& input_stream = market_file;
             size_t i = 0;
             bool succeed = true;
+
             for (; i < n; ++i)
             {
                 succeed = true;
@@ -197,15 +217,17 @@ namespace graph
 
                 if (succeed)
                 {
-                    ptr[i].first = static_cast<T>(ll_row);
-                    ptr[i].second = static_cast<T>(ll_col);
-                    if (mfp.symmetric)
-                        if (ll_col != ll_row)
+                    if (ll_col != ll_row)
+                    {
+                        ptr[i].first = static_cast<T>(ll_row);
+                        ptr[i].second = static_cast<T>(ll_col);
+                        if (mfp.symmetric)
                         {
                             ptr[i].first = static_cast<T>(ll_col);
                             ptr[i].second = static_cast<T>(ll_row);
                             i++;
                         }
+                    }
                 }
             }
             return i;
@@ -256,7 +278,7 @@ namespace graph
                     Log(LogPriorityEnum::error, "unable to open \"{}\"", path_);
                 }
             }
-            else if (endswith(path, ".tsv")) {
+            else if (endswith(path, ".tsv") || endswith(path, ".txt")) {
                 type_ = FileType::TSV;
                 fp_ = fopen(path_.c_str(), "r");
                 if (nullptr == fp_) {
