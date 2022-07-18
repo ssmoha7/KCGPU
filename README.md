@@ -43,8 +43,17 @@ approaches on GPUs
   - [-w 0] : optional, use device memory for graph preprocessing, remove it for large graphs (> 500K edges)
   
   - [-x 0] : optional, print graph stats
+  
+  - [-s 0] : optional, to sort edges read from file
+  
+  (3) Dataset:
+    All the datasets used in the paper are downloaded from SNAP dataset.
+    
+    Download the graph file and run the code without any modification to graph file name or content
+  
+ 
 
 (3) Example:
-  ./build/exe/src/main.cu.exe -g as-skitter.mtx -d 0 -m kc -o degree -k 2 -p edge  -q p8b -w 0
+  ./build/exe/src/main.cu.exe -g as-skitter.mtx -d 0 -m kc -o degree -k 2 -p edge  -q p8b -w 0 - s 0 - x 0
   
   * * For more help, use ./build/exe/src/main.cu.exe -h
